@@ -1,0 +1,204 @@
+<div class="sidenav-header">
+  <i
+    class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+    aria-hidden="true"
+    id="iconSidenav"
+  ></i>
+  <a class="navbar-brand m-0" routerLink="/dashboard">
+    <i class="material-symbols-outlined navbar-brand-img text-white">pool</i>
+    <span class="ms-1 font-weight-bold text-white">Wolves 2.0</span>
+  </a>
+</div>
+
+<hr class="horizontal light mt-0 mb-2" />
+<div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+  <ul class="navbar-nav">
+    <!-- Admin Control Collapse -->
+    <li class="nav-item mt-3">
+      <h5
+        class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8"
+      >
+        Admin Control
+      </h5>
+    </li>
+
+    <li class="nav-item">
+      <a
+        class="nav-link text-white"
+        href="#adminCollapse"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        aria-controls="adminCollapse"
+      >
+        <div
+          class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+        >
+          <i class="material-icons opacity-10">settings</i>
+        </div>
+        <span class="nav-link-text ms-1">Admin Control</span>
+      </a>
+
+      <div class="collapse" id="adminCollapse">
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/races"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">flag</i>
+              </div>
+              <span class="nav-link-text ms-1">Nomor Perlombaan</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/races"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-symbols-outlined">terminal</i>
+              </div>
+              <span class="nav-link-text ms-1">Buku Acara</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/races"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-symbols-outlined">library_add</i>
+              </div>
+              <span class="nav-link-text ms-1">Input Hasil</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- User Control Collapse -->
+    <li class="nav-item mt-3">
+      <h5
+        class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8"
+      >
+        User Control
+      </h5>
+    </li>
+
+    <li class="nav-item">
+      <a
+        class="nav-link text-white"
+        href="#userCollapse"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        aria-controls="userCollapse"
+      >
+        <div
+          class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+        >
+          <i class="material-icons opacity-10">person</i>
+        </div>
+        <span class="nav-link-text ms-1">User Control</span>
+      </a>
+
+      <div class="collapse" id="userCollapse">
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/dashboard"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">dashboard</i>
+              </div>
+              <span class="nav-link-text ms-1">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/officials"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">person</i>
+              </div>
+              <span class="nav-link-text ms-1">Official</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/athletes"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">people</i>
+              </div>
+              <span class="nav-link-text ms-1">Atlet</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/events"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">calendar_today</i>
+              </div>
+              <span class="nav-link-text ms-1">Acara Perlombaan</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/starting-list"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-icons opacity-10">list_alt</i>
+              </div>
+              <span class="nav-link-text ms-1">Starting List</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/results"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-symbols-outlined">trophy</i>
+              </div>
+              <span class="nav-link-text ms-1">Hasil Perlombaan</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>

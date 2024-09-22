@@ -6,13 +6,28 @@
   ></i>
   <a class="navbar-brand m-0" routerLink="/dashboard">
     <i class="material-symbols-outlined navbar-brand-img text-white">pool</i>
-    <span class="ms-1 font-weight-bold text-white">Wolves 2.0</span>
+    <span class="ms-1 font-weight-bold text-white">Laksana Platform APP 2.0</span>
   </a>
 </div>
 
 <hr class="horizontal light mt-0 mb-2" />
 <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
   <ul class="navbar-nav">
+     <!-- Dashboard di luar dropdown -->
+     <li class="nav-item">
+      <a
+        class="nav-link text-white"
+        routerLink="/dashboard"
+        routerLinkActive="active bg-gradient-primary"
+      >
+        <div
+          class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+        >
+          <i class="material-icons opacity-10">dashboard</i>
+        </div>
+        <span class="nav-link-text ms-1">Dashboard</span>
+      </a>
+    </li>
     <!-- Admin Control Collapse -->
     <li class="nav-item mt-3">
       <h5
@@ -43,7 +58,7 @@
           <li class="nav-item">
             <a
               class="nav-link text-white"
-              routerLink="/races"
+              routerLink="/nomor-perlombaan"
               routerLinkActive="active bg-gradient-primary"
             >
               <div
@@ -57,7 +72,7 @@
           <li class="nav-item">
             <a
               class="nav-link text-white"
-              routerLink="/races"
+              routerLink="/buku-acara"
               routerLinkActive="active bg-gradient-primary"
             >
               <div
@@ -71,7 +86,7 @@
           <li class="nav-item">
             <a
               class="nav-link text-white"
-              routerLink="/races"
+              routerLink="/input-hasil"
               routerLinkActive="active bg-gradient-primary"
             >
               <div
@@ -80,6 +95,21 @@
                 <i class="material-symbols-outlined">library_add</i>
               </div>
               <span class="nav-link-text ms-1">Input Hasil</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link text-white"
+              routerLink="/results"
+              routerLinkActive="active bg-gradient-primary"
+            >
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="material-symbols-outlined">trophy</i>
+              </div>
+              <span class="nav-link-text ms-1">Hasil Perlombaan</span>
             </a>
           </li>
         </ul>
@@ -113,20 +143,6 @@
 
       <div class="collapse" id="userCollapse">
         <ul class="navbar-nav ms-3">
-          <li class="nav-item">
-            <a
-              class="nav-link text-white"
-              routerLink="/dashboard"
-              routerLinkActive="active bg-gradient-primary"
-            >
-              <div
-                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
-              >
-                <i class="material-icons opacity-10">dashboard</i>
-              </div>
-              <span class="nav-link-text ms-1">Dashboard</span>
-            </a>
-          </li>
           <li class="nav-item">
             <a
               class="nav-link text-white"
@@ -166,7 +182,7 @@
               >
                 <i class="material-icons opacity-10">calendar_today</i>
               </div>
-              <span class="nav-link-text ms-1">Acara Perlombaan</span>
+              <span class="nav-link-text ms-1">Daftar Lomba</span>
             </a>
           </li>
           <li class="nav-item">
@@ -183,20 +199,7 @@
               <span class="nav-link-text ms-1">Starting List</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a
-              class="nav-link text-white"
-              routerLink="/results"
-              routerLinkActive="active bg-gradient-primary"
-            >
-              <div
-                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
-              >
-                <i class="material-symbols-outlined">trophy</i>
-              </div>
-              <span class="nav-link-text ms-1">Hasil Perlombaan</span>
-            </a>
-          </li>
+
         </ul>
       </div>
     </li>

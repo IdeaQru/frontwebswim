@@ -1,1 +1,32 @@
-<p>buku-acara works!</p>
+<div class="container">
+  <h1>Buku Acara</h1>
+
+  <!-- Tabel data buku acara -->
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Nomor Perlombaan</th>
+        <th>Perlombaan</th>
+        <th>Kelompok Umur</th>
+        <th>Gender</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let perlombaan of bukuAcara">
+        <td>{{ perlombaan.idPerlombaan }}</td>
+        <td>{{ perlombaan.nomorPerlombaan }}</td>
+        <td>{{ perlombaan.kelompokUmur }}</td>
+        <td>{{ perlombaan.gender }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Tombol untuk generate PDF -->
+  <button class="btn btn-primary" (click)="generatePdfPreview()">Preview Buku Acara</button>
+
+  <!-- Preview PDF setelah blob di-generate -->
+  <div *ngIf="pdfUrl" class="pdf-preview mt-3">
+    <h2>PDF Preview</h2>
+    <iframe [src]="pdfUrl | safeUrl" width="100%" height="500px"></iframe>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StartinglistComponent } from './startinglist.component';
+import { StartingListComponent } from './startinglist.component';
 
 describe('StartinglistComponent', () => {
   let component: StartinglistComponent;

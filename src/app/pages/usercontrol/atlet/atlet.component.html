@@ -1,1 +1,113 @@
-<p>atlet works!</p>
+<div class="row mt-4">
+  <!-- Kolom Kiri dengan Form -->
+  <div class="col-md-6 mt-4 mb-4">
+    <div class="card z-index-2">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 bg-transparent">
+        <div
+          class="cardmain3 bg-gradient-primary active shadow-primary border-radius-lg py-3 pe-1 text-center align-items-center"
+          height="170">
+          <h5 class="card-title text-center">Atlet</h5>
+        </div>
+
+        <!-- Use formGroup directive to bind the form -->
+        <form [formGroup]="atletForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="nama_atlet">Nama Atlet</label>
+            <input id="nama_atlet" formControlName="nama_atlet" class="form-control" />
+            <div *ngIf="atletForm.controls['nama_atlet'].invalid && atletForm.controls['nama_atlet'].touched"
+              class="text-danger">Nama Atlet is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="asal_klub">Asal Klub</label>
+            <select id="asal_klub" formControlName="asal_klub" class="form-control">
+              <option *ngFor="let club of clubs" [value]="club.idKlub">{{ club.namaKlub }}</option>
+              <!-- club.namaKlub -->
+            </select>
+            <div *ngIf="atletForm.controls['asal_klub'].invalid && atletForm.controls['asal_klub'].touched"
+              class="text-danger">Asal Klub is required.
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Jenis Kelamin</label>
+            <div class="form-check">
+              <input type="radio" id="Putra" formControlName="gender" class="form-check-input" value="Putra" />
+              <label for="Putra" class="form-check-label">Putra</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" id="Putri" formControlName="gender" class="form-check-input" value="Putri" />
+              <label for="Putri" class="form-check-label">Putri</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="kelompok_umur">Kelompok Umur</label>
+            <select id="kelompok_umur" formControlName="kelompok_umur" class="form-control">
+              <option *ngFor="let ku of kelompokUmurs" [value]="ku.idKelompokUmur">{{ ku.namaKelompokUmur }}</option>
+            </select>
+            <div *ngIf="atletForm.controls['kelompok_umur'].invalid && atletForm.controls['kelompok_umur'].touched"
+              class="text-danger">Kelompok Umur is required.
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="tanggal_lahir">Tanggal Lahir</label>
+            <input id="tanggal_lahir" formControlName="tanggal_lahir" class="form-control" type="date" />
+            <div *ngIf="atletForm.controls['tanggal_lahir'].invalid && atletForm.controls['tanggal_lahir'].touched"
+              class="text-danger">Tanggal Lahir is required.
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" [disabled]="atletForm.invalid">Simpan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kolom Kanan untuk Menampilkan Data Atlet -->
+  <div class="col-md-6 mt-4 mb-4">
+    <div class="card z-index-2">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 bg-transparent">
+        <div
+          class="cardmain4 bg-gradient-primary active shadow-primary border-radius-lg py-3 pe-1 text-center align-items-center"
+          height="170">
+          <h5 class="card-title text-center">Daftar Atlet</h5>
+        </div>
+        <!-- Dropdown untuk memilih klub -->
+        <div class="form-group">
+          <label for="clubSelect">Pilih Klub</label>
+          <select id="clubSelect" class="form-control" (change)="onClubChange($event)">
+            <option value="">Pilih Klub</option>
+            <option *ngFor="let club of clubs" [value]="club.idKlub">{{ club.namaKlub }}</option>
+          </select>
+        </div>
+
+        <!-- Menampilkan jumlah atlet di klub yang dipilih -->
+        <div *ngIf="atlets.length > 0" class="d-flex justify-content-center">
+          <div class="table-responsive" >
+            <h5 class="text-center">Jumlah Atlet Terdaftar: {{ atlets.length }}</h5>
+
+            <table class="table table-striped text-center">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Atlet</th>
+                  <th>Kelompok Umur</th>
+                  <th>Tanggal Lahir</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Tampilkan nomor urut dengan menggunakan index -->
+                <tr *ngFor="let atlet of atlets; let i = index">
+                  <td>{{ i + 1 }}</td> <!-- Nomor urut, mulai dari 1 -->
+                  <td>{{ atlet.namaAtlet }}</td>
+                  <td>{{ atlet.namaKelompokUmur }}</td>
+                  <td>{{ atlet.tanggalLahir | date: 'dd/MM/yyyy' }}</td> <!-- Format tanggal -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p *ngIf="atlets.length === 0" class="text-center">Tidak ada atlet untuk klub ini</p>

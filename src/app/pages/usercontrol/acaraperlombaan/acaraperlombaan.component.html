@@ -1,1 +1,76 @@
-<p>acaraperlombaan works!</p>
+<div class="row mt-4">
+  <!-- Form Pendaftaran Lomba -->
+  <div class="col-12 mt-4 mb-4">
+    <div class="card z-index-2">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 bg-transparent">
+        <div class="cardmain7 bg-gradient-primary active shadow-primary border-radius-lg py-3 pe-1 text-center align-items-center" height="170">
+          <h5 class="card-title text-center">Form Pendaftaran Lomba</h5>
+        </div>
+
+        <form [formGroup]="pendaftaranLombaForm" (ngSubmit)="onSubmit()">
+          <!-- Pilih Klub -->
+          <div class="form-group">
+            <label for="asal_klub">Pilih Klub</label>
+            <select id="asal_klub" formControlName="asal_klub" class="form-control" (change)="onClubChange($event)">
+              <option *ngFor="let club of clubs" [value]="club.idKlub">{{ club.namaKlub }}</option>
+            </select>
+          </div>
+
+          <!-- Pilih Atlet dari Klub -->
+          <div class="form-group">
+            <label for="atlet">Pilih Atlet</label>
+            <select id="atlet" formControlName="atlet" class="form-control" (change)="onAtletChange($event)">
+              <option *ngFor="let atlet of atlets" [value]="atlet.idAtlet">{{ atlet.namaAtlet }}</option>
+            </select>
+          </div>
+
+          <!-- Informasi Atlet yang Dipilih (Terdisable) -->
+          <div *ngIf="selectedAtlet">
+            <div class="form-group">
+              <label for="tglLahir">Tanggal Lahir</label>
+              <input type="text" id="tglLahir" class="form-control" [value]="selectedAtlet?.tanggalLahir | date: 'dd/MM/yyyy'" disabled>
+            </div>
+
+            <!-- Kelompok Umur yang Otomatis Diisi -->
+            <div class="form-group">
+              <label for="kelompokUmur">Kelompok Umur</label>
+              <input type="text" id="kelompokUmur" class="form-control" [value]="namaKelompokUmur" disabled>
+            </div>
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <input type="text" id="gender" class="form-control" [value]="selectedAtlet?.gender" disabled>
+            </div>
+            
+          </div>
+
+          <!-- Daftar Perlombaan dengan Slider and Time Inputs Side by Side -->
+          <div *ngFor="let perlombaan of perlombaans; let i = index" class="form-group">
+            <div class="d-flex justify-content-between align-items-center">
+              <label>{{ perlombaan.namaPerlombaan }}</label>
+              <label class="switch">
+                <input type="checkbox" (change)="toggleWaktuInput(i)">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <!-- Menit, Detik, Milidetik Inputs in a Row -->
+            <div class="row mt-2">
+              <div class="col-md-4 col-sm-4">
+                <input type="number" [formControlName]="'menit_' + i" class="form-control" placeholder="Menit" [disabled]="!waktuInputsEnabled[i]" min="0" style="width: 100px;">
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <input type="number" [formControlName]="'detik_' + i" class="form-control" placeholder="Detik" [disabled]="!waktuInputsEnabled[i]" min="0" max="59" style="width: 100px;">
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <input type="number" [formControlName]="'milidetik_' + i" class="form-control" placeholder="Milidetik" [disabled]="!waktuInputsEnabled[i]" min="0" max="999" style="width: 100px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary mt-3" [disabled]="pendaftaranLombaForm.invalid">Daftarkan Atlet</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

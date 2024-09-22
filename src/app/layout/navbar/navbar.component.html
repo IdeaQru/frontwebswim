@@ -25,12 +25,12 @@
       <ul class="navbar-nav ms-auto">
         <!-- Halo, [nama pengguna] -->
         <li class="nav-item px-3 d-flex align-items-center">
-          <span class="nav-link text-body p-0">Halo, User</span>
+          <span class="nav-link text-body p-0">Halo, {{ userName }}</span>
         </li>
 
         <!-- Tombol Logout -->
         <li class="nav-item px-3 d-flex align-items-center">
-          <a href="javascript:;" class="nav-link text-body p-0" >
+          <a href="javascript:;" class="nav-link text-body p-0" (click)="logout()">
             <i class="fa fa-sign-out cursor-pointer"></i> Logout
           </a>
         </li>
@@ -39,15 +39,15 @@
           <a
             href="javascript:;"
             class="nav-link text-body p-0"
-          
+            (click)="togglePluginVisibility()"
           >
             <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
           </a>
         </li>
-        <div class="fixed-plugin" >
+        <div class="fixed-plugin" [class.show]="isPluginVisible">
           <a
             class="fixed-plugin-button text-dark position-fixed px-3 py-2"
-          
+            (click)="togglePluginVisibility()"
           >
             <i class="material-icons py-2">settings</i>
           </a>
@@ -60,42 +60,22 @@
               <div class="float-end mt-4">
                 <button
                   class="btn btn-link text-dark p-0 fixed-plugin-close-button"
-                 
+                  (click)="closeFixedPlugin()"
                 >
                   <i class="material-icons">clear</i>
                 </button>
               </div>
             </div>
+            <app-uiconfigurator></app-uiconfigurator>
           </div>
         </div>
 
-        <li class="nav-item dropdown pe-2 d-flex align-items-center">
-          <a
-            href="javascript:;"
-            class="nav-link text-body p-0"
-            id="dropdownMenuButton"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i class="fa fa-bell cursor-pointer"></i>
-            <span class="badge badge-pill bg-danger">{{ notifications.length }}</span>
-          </a>
-          <ul
-            class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4"
-            aria-labelledby="dropdownMenuButton"
-          >
-            <li *ngFor="let notification of notifications">
-              <a class="dropdown-item">
-                <strong>{{ notification.timestamp }}</strong>: {{ notification.message }}
-              </a>
-            </li>
-          </ul>
-        </li>
+
         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
           <a
             href="javascript:;"
             id="iconNavbarSidenav"
-          
+            (click)="callToggleSidenav()"
             class="nav-link text-body p-0"
           >
             <div class="sidenav-toggler-inner">

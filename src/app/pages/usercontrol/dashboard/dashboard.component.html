@@ -1,1 +1,60 @@
-<p>dashboard works!</p>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Card untuk jumlah perlombaan -->
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Jumlah Perlombaan</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ perlombaans.length }}</h5>
+          <p class="card-text">Total perlombaan yang tersedia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card untuk jumlah kelompok umur -->
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">Jumlah Kelompok Umur</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ kelompokUmurs.length }}</h5>
+          <p class="card-text">Total kelompok umur yang tersedia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card untuk jumlah atlet -->
+    <div class="col-md-4">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-header">Jumlah Atlet</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ atlets.length }}</h5>
+          <p class="card-text">Total atlet yang terdaftar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Card untuk jumlah catatan waktu -->
+    <div class="col-md-4">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-header">Jumlah Catatan Waktu</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ catatanWaktu.length }}</h5>
+          <p class="card-text">Total catatan waktu yang tersedia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card untuk jumlah klub -->
+    <div class="col-md-4">
+      <div class="card text-white bg-danger mb-3">
+        <div class="card-header">Jumlah Klub</div>
+        <div class="card-body">
+          <h5 class="card-title">{{ klubs.length }}</h5>
+          <p class="card-text">Total klub yang tersedia.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

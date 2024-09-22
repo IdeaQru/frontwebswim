@@ -1,0 +1,50 @@
+// skip rank
+    let previousResult: { result: any; posisi: any } | null = null;
+    let currentPosisi = 0; // Tracks the current position
+    let skipNextPosisi = false; // Tracks whether we need to skip a position due to a tie
+
+    sortedResults.forEach((hasil, index) => {
+      // Check if the current result is NS or DQ, which we handle differently
+      if (hasil.result === 'NS' || hasil.result === 'DQ') {
+        hasil.posisi = '-'; // Set position as '-' for NS or DQ
+      } else if (previousResult && hasil.result === previousResult.result) {
+        // If the result is the same as the previous one, assign the same position
+        hasil.posisi = `*${previousResult.posisi}`;
+        sortedResults[index - 1].posisi = `*${sortedResults[index - 1].posisi}`;// Use the same position
+        skipNextPosisi = true; // Indicate that the next unique result will need to skip a position
+      } else {
+        // Otherwise, assign a new position incrementally
+        if (skipNextPosisi) {
+          currentPosisi += 2; // Skip the next position due to the tie
+          skipNextPosisi = false; // Reset the flag
+        } else {
+          currentPosisi += 1; // Normal position increment
+        }
+        hasil.posisi = currentPosisi; // Assign new position
+      }
+
+      // Update the previous result for the next iteration
+      previousResult = { result: hasil.result, posisi: hasil.posisi };
+    });
+
+//cotinue rank
+    let previousResult: { result: any; posisi: any } | null = null;
+    let currentPosisi = 0; // Tracks the current position
+
+    sortedResults.forEach((hasil, index) => {
+      // Check if the current result is NS or DQ, which we handle differently
+      if (hasil.result === 'NS' || hasil.result === 'DQ') {
+        hasil.posisi = '-'; // Set position as '-' for NS or DQ
+      } else if (previousResult && hasil.result === previousResult.result) {
+        // If the result is the same as the previous one, assign the same position
+        hasil.posisi = `*${previousResult.posisi}`;
+        sortedResults[index - 1].posisi = `*${sortedResults[index - 1].posisi}`;// Use the same position
+      } else {
+        // Otherwise, assign a new position incrementally
+        currentPosisi += 1; // Increment the position
+        hasil.posisi = currentPosisi; // Assign new position
+      }
+
+      // Update the previous result for the next iteration
+      previousResult = { result: hasil.result, posisi: hasil.posisi };
+    });

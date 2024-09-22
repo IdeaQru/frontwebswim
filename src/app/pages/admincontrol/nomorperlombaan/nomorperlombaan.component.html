@@ -1,1 +1,54 @@
-<p>nomorperlombaan works!</p>
+<div class="row mt-4">
+  <div class="col-12 mt-4 mb-4">
+    <div class="card z-index-2">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 bg-transparent">
+        <div
+          class="cardmain1 bg-gradient-primary active shadow-primary border-radius-lg py-3 pe-1 text-center align-items-center"
+          height="170">
+          <h5 class="card-title text-center">Form Nomor Lomba</h5>
+        </div>
+        <form [formGroup]="perlombaanForm" (ngSubmit)="onSubmit()">
+
+          <div class="form-group">
+            <label for="namaPerlombaan">Nama Perlombaan</label>
+            <input type="text" id="namaPerlombaan" formControlName="namaPerlombaan" class="form-control">
+            <div *ngIf="perlombaanForm.get('namaPerlombaan')?.invalid && perlombaanForm.get('namaPerlombaan')?.touched">
+              Nama Perlombaan wajib diisi.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" formControlName="gender" class="form-control">
+              <option value="" disabled selected>Pilih Gender</option>
+              <option value="Putra">Putra</option>
+              <option value="Putri">Putri</option>
+            </select>
+            <div *ngIf="perlombaanForm.get('gender')?.invalid && perlombaanForm.get('gender')?.touched">
+              Gender wajib dipilih.
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="batasWaktu">Batas Waktu</label>
+            <input type="number" id="batasWaktu" formControlName="batasWaktu" class="form-control">
+            <div *ngIf="perlombaanForm.get('batasWaktu')?.invalid && perlombaanForm.get('batasWaktu')?.touched">
+              Batas Waktu harus angka yang valid dan lebih dari 0.
+            </div>
+          </div>
+
+
+
+      <div class="form-group">
+        <label for="namaKelompokUmur">Nama Kelompok Umur</label>
+        <input type="text" id="namaKelompokUmur" formControlName="namaKelompokUmur" class="form-control">
+        <div *ngIf="perlombaanForm.get('namaKelompokUmur')?.invalid && perlombaanForm.get('namaKelompokUmur')?.touched">
+          Nama Kelompok Umur wajib diisi.
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="perlombaanForm.invalid">Daftarkan
+        Perlombaan</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>

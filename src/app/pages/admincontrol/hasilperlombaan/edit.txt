@@ -1,0 +1,504 @@
+import { Component, HostListener, OnInit } from '@angular/core';
+import { HasilLombaService } from 'src/app/services/hasil-lomba.service';
+import Swal from 'sweetalert2';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from 'src/app/services/auth.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+type TextSetting = {
+  size: number;
+  x: number;
+  y: number;
+  isDragging: boolean;
+};
+
+// Define a type for all text fields in textSettings
+type TextSettings = {
+  [key: string]: TextSetting; // Index signature allows string keys
+};
+@Component({
+  selector: 'app-hasilperlombaan',
+  templateUrl: './hasilperlombaan.component.html',
+  styleUrls: ['./hasilperlombaan.component.css']
+})
+export class HasilperlombaanComponent implements OnInit {
+
+  perlombaans: any[] = [];  // Daftar perlombaan dari API
+  kelompokUmurs: any[] = []; // Daftar kelompok umur dari API
+  hasilLomba: any[] = [];   // Data hasil lomba yang diambil dari API
+  atlets: any[] = [];       // Data atlet dari API
+  catatanWaktu: any[] = []; // Data catatan waktu dari API
+  klubs: any[] = [];        // Data klub dari API
+  selectedPerlombaan: number = 0;  // ID perlombaan yang dipilih
+  pdfUrl: SafeResourceUrl | null = null; // For storing blob URL of the generated PDF
+  textSettings: TextSettings = {
+    namaAtlet: { size: 30, x: 400, y: 450, isDragging: false },
+    posisi: { size: 30, x: 400, y: 500, isDragging: false },
+    result: { size: 30, x: 400, y: 550, isDragging: false },
+    namaKlub: { size: 30, x: 400, y: 600, isDragging: false }
+  };
+
+  currentText: string = ''; // Untuk melacak teks yang sedang di-drag
+  isDragging = false;
+  previewCanvas: HTMLCanvasElement | undefined;
+  ctx: CanvasRenderingContext2D | null = null;
+  constructor(
+    private hasilLombaService: HasilLombaService,
+    private authService: AuthService,
+    private sanitizer: DomSanitizer,
+    private http : HttpClient  // Import sanitizer for safe blob URL usage
+  ) {}
+
+  ngOnInit(): void {
+    this.fetchKelompokUmurData();
+    this.fetchPerlombaanData();
+    this.fetchAtletData();
+    this.fetchCatatanWaktu();
+    this.fetchKlubData();
+    this.previewCanvas = <HTMLCanvasElement>document.getElementById('certificate-preview');
+    this.ctx = this.previewCanvas?.getContext('2d')!; // Fetch club data from API
+  }
+
+  // Fungsi untuk mendapatkan header autentikasi
+  getHeaders(): HttpHeaders {
+    const token = this.authService.getToken(); // Mengambil token dari layanan Auth
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  // Fungsi untuk mendapatkan daftar perlombaan dari API
+  fetchPerlombaanData() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getPerlombaan(headers).subscribe(
+      (response: any) => {
+        this.perlombaans = response.data.map((perlombaan: any) => {
+          const kelompokUmur = this.kelompokUmurs.find(ku => ku.idKelompokUmur === perlombaan.idKelompokUmur);
+          return {
+            ...perlombaan,
+            namaKelompokUmur: kelompokUmur ? kelompokUmur.namaKelompokUmur : 'Unknown'  // Tambahkan nama kelompok umur berdasarkan id
+          };
+        });
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch perlombaan.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  // Fungsi untuk mendapatkan daftar kelompok umur dari API
+  fetchKelompokUmurData() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getKelompokUmur(headers).subscribe(
+      (response: any) => {
+        this.kelompokUmurs = response.data;  // Simpan data kelompok umur dari API
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch kelompok umur.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  // Fungsi untuk mendapatkan daftar atlet dari API
+  fetchAtletData() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getAtlets(headers).subscribe(
+      (response: any) => {
+        this.atlets = response.data;
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch atlet data.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  // Fungsi untuk mendapatkan daftar klub dari API
+  fetchKlubData() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getKlubs(headers).subscribe(
+      (response: any) => {
+        this.klubs = response.data;  // Simpan data klub dari API
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch club data.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  // Fungsi untuk mendapatkan catatan waktu dari API
+  fetchCatatanWaktu() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getCatatanWaktu(headers).subscribe(
+      (response: any) => {
+        this.catatanWaktu = response.data;
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch catatan waktu.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  onClickLihatHasil() {
+    if (this.selectedPerlombaan) {
+      const headers = this.getHeaders();
+      this.hasilLombaService.getHasilLomba(this.selectedPerlombaan, headers).subscribe(
+        (response: any) => {
+          this.hasilLomba = this.matchAtletKlubAndPrelimit(response.data);
+          console.log('Hasil Lomba:', this.hasilLomba);
+          this.generatePdf(false);  // Generate PDF for single event
+        },
+        (error) => {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to fetch hasil lomba.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      );
+    } else {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please select a competition first.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+    }
+  }
+
+  // Fungsi untuk mengambil hasil lomba dari semua event
+  onClickLihatSemuaHasil() {
+    const headers = this.getHeaders();
+    this.hasilLombaService.getAllHasilLomba(headers).subscribe(
+      (response: any) => {
+        this.hasilLomba = this.matchAtletKlubAndPrelimit(response.data);
+        this.generatePdf(true);  // Generate PDF for all events
+      },
+      (error) => {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to fetch all event results.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
+  }
+
+  // Fungsi untuk mencocokkan atlet, klub, dan prelimit dengan hasil lomba berdasarkan idAtlet dan idPerlombaan
+  matchAtletKlubAndPrelimit(hasilLomba: any[]): any[] {
+    return hasilLomba.map((hasil: any) => {
+      const atlet = this.atlets.find(a => a.idAtlet === hasil.idAtlet);
+      const catatanWaktu = this.catatanWaktu.find(cw => cw.idAtlet === hasil.idAtlet && cw.idPerlombaan === hasil.idPerlombaan);
+      const klub = this.klubs.find(k => k.idKlub === atlet?.idKlub);  // Find the club based on idKlub from athlete data
+      return {
+        ...hasil,
+        namaAtlet: atlet ? atlet.namaAtlet : 'Unknown',
+        namaKlub: klub ? klub.namaKlub : 'Unknown',  // Add club name
+        tanggalLahir: atlet ? atlet.tanggalLahir : 'Unknown',
+        prelimit: catatanWaktu ? catatanWaktu.Prelimit : 'No time recorded' , // Mengambil prelimit
+        result: hasil.result  // Ambil result dari hasil lomba
+
+      };
+    });
+  }
+
+  generateCertificate() {
+    if (!this.hasilLomba || this.hasilLomba.length === 0) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'No results available to generate certificates.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    const img = new Image();
+    img.src = '../../../assets/images/piagam.png'; // Path ke template sertifikat di folder assets
+    img.onload = () => {
+      if (this.ctx && this.previewCanvas) {
+        this.previewCanvas.width = img.width;
+        this.previewCanvas.height = img.height;
+
+        // Tempel template sertifikat ke canvas
+        this.ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        // Ambil pemenang pertama untuk ditampilkan di preview (misalnya, pemenang pertama)
+        const winner = this.hasilLomba[0];
+
+        // Nama Atlet
+        this.drawText('namaAtlet', winner.namaAtlet);
+
+        // Posisi Juara
+        this.drawText('posisi', `Juara: ${winner.posisi}`);
+
+        // Limit Waktu
+        this.drawText('result', `Limit Waktu: ${winner.result}`);
+
+        // Nama Klub
+        this.drawText('namaKlub', `Asal: ${winner.namaKlub}`);
+
+        document.getElementById('preview-section')!.style.display = 'block';
+      }
+    };
+  }
+
+  // Fungsi untuk menggambar teks di canvas
+  drawText(field: string, text: string) {
+    if (this.ctx) {
+      const settings = this.textSettings[field];
+      this.ctx.font = `${settings.size}px Arial`;
+      this.ctx.fillStyle = '#000000';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(text, settings.x, settings.y);
+    }
+  }
+
+  // Fungsi untuk mengunduh sertifikat
+  downloadCertificate() {
+    const link = document.createElement('a');
+    link.href = this.previewCanvas!.toDataURL('image/png');
+    link.download = 'certificate_preview.png';
+    link.click();
+  }
+
+  // Event listener untuk mousedown (memulai drag)
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent) {
+    const mouseX = event.offsetX;
+    const mouseY = event.offsetY;
+
+    // Check which text field is clicked
+    Object.keys(this.textSettings).forEach((field) => {
+      const settings = this.textSettings[field];
+      if (mouseX >= settings.x - 50 && mouseX <= settings.x + 50 &&
+          mouseY >= settings.y - 20 && mouseY <= settings.y + 20) {
+        settings.isDragging = true;
+        this.currentText = field;
+      }
+    });
+
+    this.isDragging = true;
+  }
+
+  // Event listener untuk mousemove (menggerakkan teks)
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (this.isDragging && this.currentText && this.ctx) {
+      const settings = this.textSettings[this.currentText];
+      if (settings.isDragging) {
+        settings.x = event.offsetX;
+        settings.y = event.offsetY;
+
+        // Redraw canvas with new positions
+        this.generateCertificate();
+      }
+    }
+  }
+
+  // Event listener untuk mouseup (mengakhiri drag)
+  @HostListener('mouseup')
+  onMouseUp() {
+    if (this.isDragging) {
+      this.isDragging = false;
+      Object.keys(this.textSettings).forEach((field) => {
+        this.textSettings[field].isDragging = false;
+      });
+    }
+  }
+
+  // Event listener untuk scroll (mengubah ukuran teks)
+  @HostListener('wheel', ['$event'])
+  onScroll(event: WheelEvent) {
+    if (this.currentText && this.isDragging) {
+      const settings = this.textSettings[this.currentText];
+      settings.size += event.deltaY > 0 ? -2 : 2; // Scroll down to decrease, scroll up to increase
+
+      // Redraw canvas with new size
+      this.generateCertificate();
+    }
+  }
+
+  // Save the current text settings for future use
+  saveTextSettings() {
+    localStorage.setItem('textSettings', JSON.stringify(this.textSettings));
+    Swal.fire('Saved!', 'Text settings have been saved.', 'success');
+  }
+
+  // Load saved text settings
+  loadTextSettings() {
+    const savedSettings = localStorage.getItem('textSettings');
+    if (savedSettings) {
+      this.textSettings = JSON.parse(savedSettings);
+      Swal.fire('Loaded!', 'Text settings have been loaded.', 'success');
+      this.generateCertificate(); // Re-generate the certificate with loaded settings
+    }
+  }
+
+
+
+  // Fungsi untuk generate PDF dari hasil lomba
+  generatePdf(isAllEvents: boolean = false) {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth(); // Get the width of the page
+    const centerX = pageWidth / 2; // Calculate center X for aligning text
+
+    // Add a title for the document
+
+
+    let startY = 25; // Initial Y position
+
+    // Loop through each event if generating for all events
+    const eventsToGenerate = isAllEvents ? this.perlombaans : [this.selectedPerlombaan];
+
+    eventsToGenerate.forEach((event, eventIndex) => {
+        // Check if we need to add a new page before this event
+        if (doc.internal.pageSize.height - startY < 40) {
+            doc.addPage();
+            startY = 25; // Reset startY for the new page
+        }
+
+        // Find the competition details
+        const selectedPerlombaanDetails = this.perlombaans.find(
+            perlombaan => perlombaan.idPerlombaan === (isAllEvents ? event.idPerlombaan : Number(this.selectedPerlombaan))
+        );
+
+        if (selectedPerlombaanDetails) {
+            // Ensure we don't split the event header and table across pages
+            if (doc.internal.pageSize.height - startY < 40) {
+                doc.addPage();
+                startY = 25;
+            }
+            const title = isAllEvents ? 'Hasil Semua Perlombaan' : 'Hasil Perlombaan';
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text(title, centerX, 15, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            // Add competition details to the PDF
+            doc.text(`Perlombaan: ${selectedPerlombaanDetails.namaPerlombaan}`, centerX, startY, { align: 'center' });
+            doc.text(`Kelompok Umur: ${selectedPerlombaanDetails.namaKelompokUmur}`, centerX, startY + 6, { align: 'center' });
+            doc.text(`${selectedPerlombaanDetails.gender}`, centerX, startY + 12, { align: 'center' });
+
+            // Add a line separator
+            doc.setLineWidth(0.5);
+            doc.setDrawColor(0, 0, 0);
+            doc.line(20, startY + 18, pageWidth - 20, startY + 18); // Draw a thin line
+
+            startY += 25; // Adjust startY for content below the header
+
+            // Filter and sort results for the current competition
+            const resultsForEvent = this.hasilLomba.filter(hasil => hasil.idPerlombaan === selectedPerlombaanDetails.idPerlombaan);
+
+            const sortedResults = resultsForEvent.sort((a, b) => {
+                if (a.result === 'NS') return 1;
+                if (b.result === 'NS') return -1;
+                if (a.result === 'DQ') return 1;
+                if (b.result === 'DQ') return -1;
+                return a.posisi - b.posisi;
+            });
+
+            let previousResult: { result: any; posisi: any } | null = null;
+            let currentPosisi = 0; // Tracks the current position
+
+            // Handle duplicate positions for the same result
+            sortedResults.forEach((hasil, index) => {
+                if (hasil.result === 'NS' || hasil.result === 'DQ') {
+                    hasil.posisi = '-'; // Set position as '-' for NS or DQ
+                } else if (previousResult && hasil.result === previousResult.result) {
+                    hasil.posisi = `*${previousResult.posisi}`;
+                    sortedResults[index - 1].posisi = `*${sortedResults[index - 1].posisi}`;
+                } else {
+                    currentPosisi += 1; // Increment the position
+                    hasil.posisi = currentPosisi; // Assign new position
+                }
+                previousResult = { result: hasil.result, posisi: hasil.posisi };
+            });
+
+            // Add table with results
+            autoTable(doc, {
+                head: [['Posisi', 'Nama Atlet', 'Nama Klub', 'Tanggal Lahir', 'Prelimit', 'Result']],
+                body: sortedResults.map(hasil => [
+                    (hasil.result === 'DQ' || hasil.result === 'NS') ? '-' : hasil.posisi,
+                    hasil.namaAtlet,
+                    hasil.namaKlub,  // Display the club name
+                    new Date(hasil.tanggalLahir).toLocaleDateString('en-GB'),
+                    hasil.prelimit,
+                    hasil.result
+                ]),
+                startY: startY, // Start after the competition details
+                margin: { top: 10 }, // Add margin to avoid overlap
+                theme: 'plain',
+                styles: {
+                    lineWidth: 0,
+                    fontSize: 9,
+                    cellPadding: 1,
+                    halign: 'center',
+                    valign: 'middle',
+                },
+                headStyles: {
+                    fillColor: [255, 255, 255],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle',
+                    lineWidth: 0,
+                },
+                didDrawCell: (data) => {
+                    const lastRowIndex = data.table.body.length - 1;
+                    if (data.section === 'body' && data.row.index === lastRowIndex) {
+                        const currentY = data.cell.y + data.cell.height + 2;
+                        doc.setLineWidth(0.5);
+                        doc.setDrawColor(0, 0, 0);
+                        doc.line(20, currentY, pageWidth - 20, currentY); // Draw a single line under the row
+                    }
+
+                    // Draw explanation only once, after the last row
+                    if (data.row.index === lastRowIndex) {
+                        const explanationY = data.cell.y + data.cell.height + 8;
+                        doc.setFontSize(8);
+                        doc.text('* = Hasil sama', 20, explanationY);
+                        doc.text('DQ = DISKUALIFIKASI', 20, explanationY + 4);
+                        doc.text('NS = NO SWIM', 20, explanationY + 8);
+                    }
+                },
+            });
+
+            startY += 15 + sortedResults.length * 8; // Move startY down for the next event
+        }
+    });
+
+    // Create blob URL for the generated PDF
+    const blob = doc.output('blob');
+    const unsafeUrl = URL.createObjectURL(blob);
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(unsafeUrl);
+}
+
+}

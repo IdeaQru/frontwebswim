@@ -1,0 +1,125 @@
+<div class="container mt-5">
+  <!-- Form for selecting competition -->
+  <div class="card p-4 shadow-lg">
+    <h4 class="mb-3">Pilih Perlombaan dan Hasil Lomba</h4>
+    <div class="form-group">
+      <label for="perlombaan">Pilih Perlombaan:</label>
+      <select id="perlombaan" class="form-control" [(ngModel)]="selectedPerlombaan">
+        <option value="" disabled selected>Pilih nomor perlombaan</option>
+        <option *ngFor="let perlombaan of perlombaans" [value]="perlombaan.idPerlombaan">
+          {{ perlombaan.namaPerlombaan }} - {{ perlombaan.namaKelompokUmur }} ({{ perlombaan.gender }})
+        </option>
+      </select>
+    </div>
+
+    <!-- Buttons for viewing results and generating certificates -->
+    <div class="mt-3 d-flex justify-content-between">
+      <button class="btn btn-primary" (click)="onClickLihatHasil()">Lihat Hasil Perlombaan</button>
+      <button class="btn btn-success" (click)="onClickLihatSemuaHasil()">Lihat Semua Hasil</button>
+      <button class="btn btn-warning" (click)="generateCertificate()">Generate Sertifikat</button>
+    </div>
+  </div>
+
+  <!-- Certificate Preview Section -->
+  <div id="preview-section" class="mt-5" style="display: none;">
+    <div class="card p-4 shadow-lg">
+      <h4 class="text-center mb-3">Preview Sertifikat</h4>
+      <canvas id="certificate-preview" style="border: 1px solid #ccc; width: 100%; height: auto;"></canvas>
+      <br>
+      <div class="text-center mt-3">
+        <button class="btn btn-success" (click)="downloadWinnerCertificateAsPdf()">Download Sertifikat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Control Section for adjusting text size and position -->
+  <div class="card p-4 mt-5 shadow-lg">
+    <h4 class="mb-3">Atur Posisi dan Ukuran Teks</h4>
+    <div class="row">
+      <!-- Nama Perlombaan -->
+      <div class="col-md-6">
+        <label for="namaPerlombaanSize">Ukuran Nama Perlombaan:</label>
+        <input id="namaPerlombaanSize" type="number" class="form-control" [(ngModel)]="textSettings.namaLomba.size">
+        <label for="namaPerlombaanX">Posisi X:</label>
+        <input id="namaPerlombaanX" type="number" class="form-control" [(ngModel)]="textSettings.namaLomba.x">
+        <label for="namaPerlombaanY">Posisi Y:</label>
+        <input id="namaPerlombaanY" type="number" class="form-control" [(ngModel)]="textSettings.namaLomba.y">
+      </div>
+
+      <!-- Kelompok Umur -->
+      <div class="col-md-6">
+        <label for="kelompokUmurSize">Ukuran Kelompok Umur:</label>
+        <input id="kelompokUmurSize" type="number" class="form-control" [(ngModel)]="textSettings.namaKelompokUmur.size">
+        <label for="kelompokUmurX">Posisi X:</label>
+        <input id="kelompokUmurX" type="number" class="form-control" [(ngModel)]="textSettings.namaKelompokUmur.x">
+        <label for="kelompokUmurY">Posisi Y:</label>
+        <input id="kelompokUmurY" type="number" class="form-control" [(ngModel)]="textSettings.namaKelompokUmur.y">
+      </div>
+
+      <!-- Gender -->
+      <div class="col-md-6 mt-3">
+        <label for="genderSize">Ukuran Gender:</label>
+        <input id="genderSize" type="number" class="form-control" [(ngModel)]="textSettings.gender.size">
+        <label for="genderX">Posisi X:</label>
+        <input id="genderX" type="number" class="form-control" [(ngModel)]="textSettings.gender.x">
+        <label for="genderY">Posisi Y:</label>
+        <input id="genderY" type="number" class="form-control" [(ngModel)]="textSettings.gender.y">
+      </div>
+
+      <!-- Nama Atlet -->
+      <div class="col-md-6 mt-3">
+        <label for="namaAtletSize">Ukuran Nama Atlet:</label>
+        <input id="namaAtletSize" type="number" class="form-control" [(ngModel)]="textSettings.namaAtlet.size">
+        <label for="namaAtletX">Posisi X:</label>
+        <input id="namaAtletX" type="number" class="form-control" [(ngModel)]="textSettings.namaAtlet.x">
+        <label for="namaAtletY">Posisi Y:</label>
+        <input id="namaAtletY" type="number" class="form-control" [(ngModel)]="textSettings.namaAtlet.y">
+      </div>
+
+      <!-- Posisi -->
+      <div class="col-md-6">
+        <label for="posisiSize">Ukuran Posisi:</label>
+        <input id="posisiSize" type="number" class="form-control" [(ngModel)]="textSettings.posisi.size">
+        <label for="posisiX">Posisi X:</label>
+        <input id="posisiX" type="number" class="form-control" [(ngModel)]="textSettings.posisi.x">
+        <label for="posisiY">Posisi Y:</label>
+        <input id="posisiY" type="number" class="form-control" [(ngModel)]="textSettings.posisi.y">
+      </div>
+
+      <!-- Limit Waktu -->
+      <div class="col-md-6 mt-3">
+        <label for="resultSize">Ukuran Limit Waktu:</label>
+        <input id="resultSize" type="number" class="form-control" [(ngModel)]="textSettings.result.size">
+        <label for="resultX">Posisi X:</label>
+        <input id="resultX" type="number" class="form-control" [(ngModel)]="textSettings.result.x">
+        <label for="resultY">Posisi Y:</label>
+        <input id="resultY" type="number" class="form-control" [(ngModel)]="textSettings.result.y">
+      </div>
+
+      <!-- Nama Klub -->
+      <div class="col-md-6 mt-3">
+        <label for="namaKlubSize">Ukuran Nama Klub:</label>
+        <input id="namaKlubSize" type="number" class="form-control" [(ngModel)]="textSettings.namaKlub.size">
+        <label for="namaKlubX">Posisi X:</label>
+        <input id="namaKlubX" type="number" class="form-control" [(ngModel)]="textSettings.namaKlub.x">
+        <label for="namaKlubY">Posisi Y:</label>
+        <input id="namaKlubY" type="number" class="form-control" [(ngModel)]="textSettings.namaKlub.y">
+      </div>
+    </div>
+
+    <!-- Buttons for saving/loading settings and previewing the certificate -->
+    <div class="mt-4 text-center">
+      <button class="btn btn-primary" (click)="generateCertificate()">Preview Sertifikat</button>
+      <button class="btn btn-secondary" (click)="saveTextSettings()">Simpan Pengaturan</button>
+      <button class="btn btn-info" (click)="loadTextSettings()">Muat Pengaturan</button>
+    </div>
+  </div>
+
+  <!-- PDF Display -->
+  <div *ngIf="pdfUrl" class="mt-5">
+    <div class="card p-4 shadow-lg">
+      <h4 class="text-center">Hasil Perlombaan</h4>
+      <iframe [src]="pdfUrl" width="100%" height="600px" style="border: none;"></iframe>
+    </div>
+  </div>
+</div>

@@ -11,11 +11,19 @@ import { DashboardComponent } from './pages/usercontrol/dashboard/dashboard.comp
 import { OfficialComponent } from './pages/usercontrol/official/official.component';
 import { AtletComponent } from './pages/usercontrol/atlet/atlet.component';
 import { AcaraperlombaanComponent } from './pages/usercontrol/acaraperlombaan/acaraperlombaan.component';
-import { StartinglistComponent } from './pages/usercontrol/startinglist/startinglist.component';
-import { HasilperlombaanComponent } from './pages/usercontrol/hasilperlombaan/hasilperlombaan.component';
+import { StartingListComponent } from './pages/usercontrol/startinglist/startinglist.component';
+import { HasilperlombaanComponent } from './pages/admincontrol/hasilperlombaan/hasilperlombaan.component';
 import { NomorperlombaanComponent } from './pages/admincontrol/nomorperlombaan/nomorperlombaan.component';
 import { InputhasilComponent } from './pages/admincontrol/input_hasil/inputhasil.component';
 import { BukuAcaraComponent } from './pages/admincontrol/buku_acara/buku-acara.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MainlayoutComponent } from './mainlayout/mainlayout.component';
+import { ReactiveFormsModule } from '@angular/forms'; // Tambahkan ini
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { SafeUrlPipe } from './safe-url.pipe';
 
 @NgModule({
   declarations: [
@@ -28,15 +36,23 @@ import { BukuAcaraComponent } from './pages/admincontrol/buku_acara/buku-acara.c
     OfficialComponent,
     AtletComponent,
     AcaraperlombaanComponent,
-    StartinglistComponent,
+    StartingListComponent,
     HasilperlombaanComponent,
     NomorperlombaanComponent,
     InputhasilComponent,
-    BukuAcaraComponent
+    BukuAcaraComponent,
+    LoginComponent,
+    RegisterComponent,
+    MainlayoutComponent,
+    SafeUrlPipe
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxExtendedPdfViewerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

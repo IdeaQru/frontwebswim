@@ -1,1 +1,74 @@
-<p>inputhasil works!</p>
+<div class="form-group">
+  <label for="perlombaan" class="font-weight-bold mb-2">Pilih Perlombaan:</label>
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <span class="input-group-text"><i class="fas fa-flag"></i></span> <!-- Ikon sebelum dropdown -->
+    </div>
+    <select id="perlombaan" class="form-control custom-select" [(ngModel)]="selectedPerlombaan" (change)="onPerlombaanSelect()">
+      <option value="" disabled selected>Pilih nomor perlombaan</option> <!-- Placeholder -->
+      <option *ngFor="let perlombaan of perlombaans" [value]="perlombaan.idPerlombaan">
+        {{ perlombaan.namaPerlombaan }} - Kelompok Umur: {{ perlombaan.namaKelompokUmur }} ({{ perlombaan.gender }})
+      </option>
+    </select>
+  </div>
+</div>
+
+<div *ngIf="seriesLanes.length > 0">
+  <ng-container *ngFor="let series of seriesLanes; let i = index">
+    <h3>Seri {{ i + 1 }}</h3>
+    <table class="table table-striped center text-center">
+      <thead>
+        <tr>
+          <th>Lintasan</th>
+          <th>Nama Atlet</th>
+          <th>Tanggal Lahir</th>
+          <th>Prelimit</th>
+          <th>Input Hasil (Menit:Detik:Milidetik)</th>
+          <th>Rank</th>
+          <th>Opsi</th>
+        </tr>
+      </thead>
+      <tbody >
+        <tr *ngFor="let atlet of series; let laneIndex = index">
+          <!-- Tampilkan hanya jika atlet tidak null -->
+          <ng-container *ngIf="atlet" >
+            <td>{{ laneIndex + 1 }}</td> <!-- Tampilkan lintasan -->
+            <td>{{ atlet.namaAtlet }}</td>
+            <td>{{ atlet.tanggalLahir | date:'dd/MM/yyyy' }}</td>
+            <td>{{ atlet.prelimit }}</td>
+            <td>
+              <!-- Jika sedang dalam mode edit, tampilkan input -->
+              <ng-container *ngIf="atlet.editing; else viewMode">
+                <input type="text" class="form-control mb-2" [(ngModel)]="atlet.result" placeholder="MM:SS:MS">
+                <!-- Dropdown untuk DQ atau NS -->
+                <select class="form-control" [(ngModel)]="atlet.result">
+                  <option value="">Masukkan Waktu</option>
+                  <option value="DQ">Disqualified (DQ)</option>
+                  <option value="NS">No Show (NS)</option>
+                </select>
+              </ng-container>
+              <ng-template #viewMode>
+                {{ atlet.result || 'Belum Diisi' }}
+              </ng-template>
+            </td>
+            <td>{{ atlet.posisi }}</td>
+
+            <td>
+              <!-- Tombol Edit dan Save -->
+              <ng-container *ngIf="!atlet.editing; else saveMode">
+                <button class="btn btn-warning" (click)="onEdit(atlet)">Edit</button>
+              </ng-container>
+              <ng-template #saveMode>
+                <button class="btn btn-success" (click)="onSave(atlet)">Save</button>
+              </ng-template>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <div class="form-group">
+    <button class="btn btn-primary" (click)="submitPerlombaan()">Submit Perlombaan</button>
+  </div>
+</div>

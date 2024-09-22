@@ -1,0 +1,22 @@
+.table th, .table td {
+  color: #212529; /* Darker text color for better readability */
+  font-weight: normal;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f2f2f2; /* Light background for alternating rows */
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e6e6e6; /* Slightly darker background on hover */
+}
+
+.table thead {
+  background-color: #007bff; /* Blue header background */
+  color: white; /* White text for the header */
+}
+
+.table tbody td {
+  color: #343a40; /* Dark gray for the table data */
+}
+
